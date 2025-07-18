@@ -85,7 +85,7 @@ library(ggrepel)
   groups <- setdiff(unique(pheno_data$Group), reference_group)
 
   #for testing 
-  #g="ventricular_ERC001"
+ # g="ventricular_ERC001"
 
   #Loop through the comparisons to perform DE analysis
   for (g in groups) {
@@ -213,9 +213,6 @@ library(ggrepel)
         if (!is.null(ego) && nrow(ego) > 0) {
             write.xlsx(ego_df, paste0(comp,"_GO_Enrichment.xlsx"))
     
-    
-           png(paste0(comp,"_GO_BP.png"), width = 1600, height = 1200, res = 300)
-    
             print(dotplot(ego, showCategory = 10, title = paste("GO BP:", comp))) +
             ggplot2::theme(
               axis.text.y = ggplot2::element_text(size = 8),
@@ -223,7 +220,8 @@ library(ggrepel)
               axis.text.x = ggplot2::element_text(size = 8),    # axis labels
               plot.title = ggplot2::element_text(size = 12)   # title font
               )
-          dev.off()
+            ggsave(paste(comp,"_GO_BP.png"), width = 8, height = 6, dpi = 300)
+         
         } else {
           message("No GO enrichment results for ", comp)
           }
@@ -235,8 +233,7 @@ library(ggrepel)
     ekegg_df <- as.data.frame(ekegg)
 
     if (!is.null(ekegg) && nrow(ekegg) > 0) {
-  
-        png(paste0(comp,"_KEGG.png"), width = 1600, height = 1200, res = 300)
+
   
         print(dotplot(ekegg, showCategory = 10, title = paste("KEGG:", comp)))+
         ggplot2::theme(
@@ -245,7 +242,9 @@ library(ggrepel)
           axis.text.x = ggplot2::element_text(size = 8),    # axis labels
           plot.title = ggplot2::element_text(size = 12)   # title font
         )
-        dev.off()
+         
+        ggsave(paste(comp,"_KEGG.png"), width = 8, height = 6, dpi = 300)
+        
         } else {
         message("No KEGG enrichment results for ", comp)
         }
@@ -256,10 +255,7 @@ library(ggrepel)
     if (!is.null(eReact) && nrow(eReact) > 0) {
   
          write.xlsx(eReact_df, paste0(comp,"_Reactome_Enrichment.xlsx"))
-  
-  
-          png(paste0(comp,"_Reactome.png"), width = 1600, height = 1200, res = 300)
-  
+
           print(dotplot(eReact, showCategory = 10, title = paste("Reactome:", comp))) +
           ggplot2::theme(
             axis.text.y = ggplot2::element_text(size = 8),
@@ -267,7 +263,8 @@ library(ggrepel)
             axis.text.x = ggplot2::element_text(size = 8),    # axis labels
             plot.title = ggplot2::element_text(size = 12)   # title font
           )
-          dev.off()
+          ggsave(paste(comp,"_Reactome.png"), width = 8, height = 6, dpi = 300)
+          
       } else {
       message("No REACTOME enrichment results for ", comp)
       }
