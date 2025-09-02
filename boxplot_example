@@ -1,0 +1,11 @@
+#boxplot of ERBB2 
+library(ggplot2)
+library(openxlsx)
+data <- read.xlsx('ERBB_check_boxplot.xlsx', rowNames = TRUE)
+
+# grouped boxplot
+ggplot(data, aes(x=Group, y=ERBB2, fill=treatment)) + 
+  geom_boxplot()+
+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+      axis.title.x = element_blank())+
+  ggtitle("ERBB2 expression levels (normalised counts)")
