@@ -1,0 +1,41 @@
+#Script to annotate DESeq2 object (normalised data/transformed data/results) with GeneSymbol from ENSEMBLIDS
+
+#Libraries
+#for mouse
+library(org.Mm.eg.db)
+#for human
+library(org.Hs.eg.db)
+
+#Create GENEID data frame file for gene annotation
+#Get the ENSEMBL IDs as vector
+
+#where count matrix is a .txt file containing raw counts (rows = ENSEMBL IDs, columns= samples)
+ENSEMBLIDS <- count_matrix
+ENSEMBLIDS$ENSEMBL <- rownames(count_matrix)
+ENSEMBLIDS<-as.vector(ENSEMBLIDS$ENSEMBL)
+#Use org.Mm.eg.db package to map Gene Symbol (or other) to the ENSEMBL IDs in the GENEID dataframe
+GENEID <- as.data.frame (mapIds(org.Mm.eg.db, ENSEMBLIDS, keytype="ENSEMBL", column="SYMBOL", multiVals = "first"))
+GENEID$ENSEMBL <- rownames(GENEID)
+#Rename column to GeneSymbol (GENEID columns: 'GeneSymbol', 'ENSEMBL')
+#library(data.table)
+setnames (GENEID, paste(colnames(GENEID[1])), 'GeneSymbol')
+colnames (GENEID[1]) <- 'GeneSymbol'
+
+
+
+#####DESeq2 analysis here ######
+
+#create result data.frame from dds results 
+res_df <- as.data.frame(res(dds))
+
+#Annotate with GeneSymbol column and rearrange columns
+res_df <- merge(res_df, GENEID, by=0)
+#replace missing GeneSymbol (NAs) with original ENSEMBL ID.
+res_df<-res_df %>%
+  mutate(GeneSymbol = coalesce(GeneSymbol, ENSEMBL)) # works
+
+#remove additional columns and reorder
+lastcol<-(ncol(res_df))
+res_df<-res_df[,2:lastcol]  
+res_df <- res_df %>%
+  dplyr::select(ENSEMBL, GeneSymbol, everything()) 
